@@ -18,7 +18,7 @@ public class RegisterAccount {
 
     @NotNull
     @Column
-    private BigDecimal moneyAmount = BigDecimal.ZERO;
+    private BigDecimal balance = BigDecimal.ZERO;
 
 
 
