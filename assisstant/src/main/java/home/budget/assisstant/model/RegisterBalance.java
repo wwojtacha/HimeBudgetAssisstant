@@ -2,6 +2,8 @@ package home.budget.assisstant.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "balance")
@@ -13,5 +15,11 @@ public class RegisterBalance {
     @NotEmpty(message = "Name is required.")
     @Column
     private String name;
+
+    @NotNull
+    @Column
+    private BigDecimal moneyAmount = BigDecimal.ZERO;
+
+
 
 }
