@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "balance")
+@Table(name = "register_accounts")
 public class RegisterAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
