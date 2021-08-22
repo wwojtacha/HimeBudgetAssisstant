@@ -32,4 +32,13 @@ public class RegisterAccountController {
             @RequestBody @Valid RechargeAmount rechargeAmount) {
         return registerAccountService.rechargeRegisterAccount(id, rechargeAmount);
     }
+
+    @PutMapping("/{sourceId}/{destinationId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RegisterAccount rechargeRegisterAccount(
+            @PathVariable Long sourceId,
+            @PathVariable Long destinationId,
+            @RequestBody @Valid RechargeAmount rechargeAmount) {
+        return registerAccountService.transferMoney(sourceId, destinationId, rechargeAmount);
+    }
 }
