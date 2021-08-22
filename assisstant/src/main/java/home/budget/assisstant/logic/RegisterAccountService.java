@@ -50,4 +50,43 @@ public class RegisterAccountService {
         }
     }
 
+    @Transactional
+    public RegisterAccount transferMoney(
+            final Long sourceId, final Long destinationId,
+            final RechargeAmount transferAmount) {
+
+        final Optional<RegisterAccount> dbSourceRegisterAccount = registerAccountRepository.findById(sourceId);
+        validateRegisterAccountPresence(sourceId, dbSourceRegisterAccount);
+
+        final Optional<RegisterAccount> dbDestinationRegisterAccount = registerAccountRepository.findById(destinationId);
+        validateRegisterAccountPresence(destinationId, dbDestinationRegisterAccount);
+
+        final RegisterAccount sourceRegisterAccount = dbSourceRegisterAccount.get();
+        final RegisterAccount destinationRegisterAccount = dbDestinationRegisterAccount.get();
+
+        final BigDecimal transferValue = transferAmount.getRechargeValue();
+
+        final BigDecimal previousSourceBalance = sourceRegisterAccount.getBalance();
+
+        validateAvailableBalance(previousSourceBalance, transferValue);
+
+        final BigDecimal currentSourceBalance = previousSourceBalance.subtract(transferValue);
+        sourceRegisterAccount.setBalance(currentSourceBalance);
+        registerAccountRepository.save(sourceRegisterAccount);
+
+        final BigDecimal previousDestinationBalance = destinationRegisterAccount.getBalance();
+        final BigDecimal currentDestinationBalance = previousDestinationBalance.add(transferValue);
+        destinationRegisterAccount.setBalance(currentDestinationBalance);
+        registerAccountRepository.save(destinationRegisterAccount);
+
+        return sourceRegisterAccount;
+    }
+
+    private void validateAvailableBalance(final BigDecimal sourceBalance, final BigDecimal transferValue) {
+        if (sourceBalance.compareTo(transferValue) < 0) {
+            final String message = "Insufficient funds to make the transfer.";
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, message);
+        }
+    }
+
 }
