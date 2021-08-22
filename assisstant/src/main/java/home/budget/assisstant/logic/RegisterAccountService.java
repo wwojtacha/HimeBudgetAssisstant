@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -29,10 +30,7 @@ public class RegisterAccountService {
 
         final Optional<RegisterAccount> dbRegisterAccount = registerAccountRepository.findById(id);
 
-        if (dbRegisterAccount.isEmpty()) {
-            final String message = String.format("Register account with id: %s does not exist.", id);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, message);
-        }
+        validateRegisterAccountPresence(id, dbRegisterAccount);
 
         final RegisterAccount registerAccount = dbRegisterAccount.get();
         final BigDecimal previousBalance = registerAccount.getBalance();
@@ -44,4 +42,12 @@ public class RegisterAccountService {
 
         return registerAccountRepository.save(registerAccount);
     }
+
+    private void validateRegisterAccountPresence(Long id, Optional<RegisterAccount> dbRegisterAccount) {
+        if (dbRegisterAccount.isEmpty()) {
+            final String message = String.format("Register account with id: %s does not exist.", id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, message);
+        }
+    }
+
 }
