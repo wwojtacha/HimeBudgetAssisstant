@@ -1,6 +1,6 @@
 package home.budget.assisstant.logic;
 
-import home.budget.assisstant.model.RechargeAmount;
+import home.budget.assisstant.model.TransferAmount;
 import home.budget.assisstant.model.RegisterAccount;
 import home.budget.assisstant.repository.RegisterAccountRepository;
 import org.springframework.data.domain.Sort;
@@ -26,7 +26,7 @@ public class RegisterAccountService {
         return registerAccountRepository.findAll(Sort.by(Sort.Order.desc("name")));
     }
 
-    public RegisterAccount rechargeRegisterAccount(final Long id, final RechargeAmount rechargeAmount) {
+    public RegisterAccount rechargeRegisterAccount(final Long id, final TransferAmount transferAmount) {
 
         final Optional<RegisterAccount> dbRegisterAccount = registerAccountRepository.findById(id);
 
@@ -35,7 +35,7 @@ public class RegisterAccountService {
         final RegisterAccount registerAccount = dbRegisterAccount.get();
         final BigDecimal previousBalance = registerAccount.getBalance();
 
-        BigDecimal rechargeValue = rechargeAmount.getRechargeValue();
+        BigDecimal rechargeValue = transferAmount.getTransferValue();
 
         final BigDecimal currentBalance = previousBalance.add(rechargeValue);
         registerAccount.setBalance(currentBalance);
@@ -53,7 +53,7 @@ public class RegisterAccountService {
     @Transactional
     public RegisterAccount transferMoney(
             final Long sourceId, final Long destinationId,
-            final RechargeAmount transferAmount) {
+            final TransferAmount transferAmount) {
 
         final Optional<RegisterAccount> dbSourceRegisterAccount = registerAccountRepository.findById(sourceId);
         validateRegisterAccountPresence(sourceId, dbSourceRegisterAccount);
@@ -64,7 +64,7 @@ public class RegisterAccountService {
         final RegisterAccount sourceRegisterAccount = dbSourceRegisterAccount.get();
         final RegisterAccount destinationRegisterAccount = dbDestinationRegisterAccount.get();
 
-        final BigDecimal transferValue = transferAmount.getRechargeValue();
+        final BigDecimal transferValue = transferAmount.getTransferValue();
 
         final BigDecimal previousSourceBalance = sourceRegisterAccount.getBalance();
 

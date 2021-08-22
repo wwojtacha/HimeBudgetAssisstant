@@ -1,7 +1,7 @@
 package home.budget.assisstant.controller;
 
 import home.budget.assisstant.logic.RegisterAccountService;
-import home.budget.assisstant.model.RechargeAmount;
+import home.budget.assisstant.model.TransferAmount;
 import home.budget.assisstant.model.RegisterAccount;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +29,8 @@ public class RegisterAccountController {
     @ResponseStatus(HttpStatus.OK)
     public RegisterAccount rechargeRegisterAccount(
             @PathVariable Long id,
-            @RequestBody @Valid RechargeAmount rechargeAmount) {
-        return registerAccountService.rechargeRegisterAccount(id, rechargeAmount);
+            @RequestBody @Valid TransferAmount transferAmount) {
+        return registerAccountService.rechargeRegisterAccount(id, transferAmount);
     }
 
     @PutMapping("/{sourceId}/{destinationId}")
@@ -38,7 +38,7 @@ public class RegisterAccountController {
     public RegisterAccount rechargeRegisterAccount(
             @PathVariable Long sourceId,
             @PathVariable Long destinationId,
-            @RequestBody @Valid RechargeAmount rechargeAmount) {
-        return registerAccountService.transferMoney(sourceId, destinationId, rechargeAmount);
+            @RequestBody @Valid TransferAmount transferAmount) {
+        return registerAccountService.transferMoney(sourceId, destinationId, transferAmount);
     }
 }
