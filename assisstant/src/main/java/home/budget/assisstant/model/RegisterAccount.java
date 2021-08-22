@@ -20,6 +20,11 @@ public class RegisterAccount {
     @Column
     private BigDecimal balance = BigDecimal.ZERO;
 
+    public String getName() {
+        return name;
+    }
 
-
+    public BigDecimal getBalance() {
+        return balance;
+    }
 }
