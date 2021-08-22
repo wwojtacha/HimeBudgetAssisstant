@@ -28,6 +28,8 @@ public class RegisterAccountService {
 
     public RegisterAccount rechargeRegisterAccount(final Long id, final TransferAmount transferAmount) {
 
+        validateTransferAmountCorrectness(transferAmount);
+
         final Optional<RegisterAccount> dbRegisterAccount = registerAccountRepository.findById(id);
 
         validateRegisterAccountPresence(id, dbRegisterAccount);
@@ -43,6 +45,15 @@ public class RegisterAccountService {
         return registerAccountRepository.save(registerAccount);
     }
 
+    private void validateTransferAmountCorrectness(final TransferAmount transferAmount) {
+        final BigDecimal transferValue = transferAmount.getTransferValue();
+
+        if (transferValue != null && transferValue.compareTo(BigDecimal.ZERO) < 0) {
+            final String message = "Transfer/recharge amount must not be a negative number.";
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, message);
+        }
+    }
+
     private void validateRegisterAccountPresence(Long id, Optional<RegisterAccount> dbRegisterAccount) {
         if (dbRegisterAccount.isEmpty()) {
             final String message = String.format("Register account with id: %s does not exist.", id);
@@ -54,6 +65,8 @@ public class RegisterAccountService {
     public RegisterAccount transferMoney(
             final Long sourceId, final Long destinationId,
             final TransferAmount transferAmount) {
+
+        validateTransferAmountCorrectness(transferAmount);
 
         final Optional<RegisterAccount> dbSourceRegisterAccount = registerAccountRepository.findById(sourceId);
         validateRegisterAccountPresence(sourceId, dbSourceRegisterAccount);
