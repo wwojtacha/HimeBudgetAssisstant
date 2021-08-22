@@ -4,9 +4,7 @@ import home.budget.assisstant.model.TransferAmount;
 import home.budget.assisstant.model.RegisterAccount;
 import home.budget.assisstant.repository.RegisterAccountRepository;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -17,9 +15,11 @@ import java.util.Optional;
 public class RegisterAccountService {
 
     private final RegisterAccountRepository registerAccountRepository;
+    private final TransferValidator transferValidator;
 
-    public RegisterAccountService(RegisterAccountRepository registerAccountRepository) {
+    public RegisterAccountService(RegisterAccountRepository registerAccountRepository, TransferValidator transferValidator) {
         this.registerAccountRepository = registerAccountRepository;
+        this.transferValidator = transferValidator;
     }
 
     public List<RegisterAccount> getRegisterAccounts() {
@@ -28,11 +28,11 @@ public class RegisterAccountService {
 
     public RegisterAccount rechargeRegisterAccount(final Long id, final TransferAmount transferAmount) {
 
-        validateTransferAmountCorrectness(transferAmount);
+        transferValidator.validateTransferAmountCorrectness(transferAmount);
 
         final Optional<RegisterAccount> dbRegisterAccount = registerAccountRepository.findById(id);
 
-        validateRegisterAccountPresence(id, dbRegisterAccount);
+        transferValidator.validateRegisterAccountPresence(id, dbRegisterAccount);
 
         final RegisterAccount registerAccount = dbRegisterAccount.get();
         final BigDecimal previousBalance = registerAccount.getBalance();
@@ -45,34 +45,18 @@ public class RegisterAccountService {
         return registerAccountRepository.save(registerAccount);
     }
 
-    private void validateTransferAmountCorrectness(final TransferAmount transferAmount) {
-        final BigDecimal transferValue = transferAmount.getTransferValue();
-
-        if (transferValue != null && transferValue.compareTo(BigDecimal.ZERO) < 0) {
-            final String message = "Transfer/recharge amount must not be a negative number.";
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, message);
-        }
-    }
-
-    private void validateRegisterAccountPresence(Long id, Optional<RegisterAccount> dbRegisterAccount) {
-        if (dbRegisterAccount.isEmpty()) {
-            final String message = String.format("Register account with id: %s does not exist.", id);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, message);
-        }
-    }
-
     @Transactional
     public RegisterAccount transferMoney(
             final Long sourceId, final Long destinationId,
             final TransferAmount transferAmount) {
 
-        validateTransferAmountCorrectness(transferAmount);
+        transferValidator.validateTransferAmountCorrectness(transferAmount);
 
         final Optional<RegisterAccount> dbSourceRegisterAccount = registerAccountRepository.findById(sourceId);
-        validateRegisterAccountPresence(sourceId, dbSourceRegisterAccount);
+        transferValidator.validateRegisterAccountPresence(sourceId, dbSourceRegisterAccount);
 
         final Optional<RegisterAccount> dbDestinationRegisterAccount = registerAccountRepository.findById(destinationId);
-        validateRegisterAccountPresence(destinationId, dbDestinationRegisterAccount);
+        transferValidator.validateRegisterAccountPresence(destinationId, dbDestinationRegisterAccount);
 
         final RegisterAccount sourceRegisterAccount = dbSourceRegisterAccount.get();
         final RegisterAccount destinationRegisterAccount = dbDestinationRegisterAccount.get();
@@ -81,7 +65,7 @@ public class RegisterAccountService {
 
         final BigDecimal previousSourceBalance = sourceRegisterAccount.getBalance();
 
-        validateAvailableBalance(previousSourceBalance, transferValue);
+        transferValidator.validateAvailableBalance(previousSourceBalance, transferValue);
 
         final BigDecimal currentSourceBalance = previousSourceBalance.subtract(transferValue);
         sourceRegisterAccount.setBalance(currentSourceBalance);
@@ -93,13 +77,6 @@ public class RegisterAccountService {
         registerAccountRepository.save(destinationRegisterAccount);
 
         return sourceRegisterAccount;
-    }
-
-    private void validateAvailableBalance(final BigDecimal sourceBalance, final BigDecimal transferValue) {
-        if (sourceBalance.compareTo(transferValue) < 0) {
-            final String message = "Insufficient funds to make the transfer.";
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, message);
-        }
     }
 
 }
