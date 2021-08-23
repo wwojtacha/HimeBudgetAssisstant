@@ -44,7 +44,10 @@ class AssistantApplicationTests {
 		final String message = exception.getMessage();
 		final boolean isMessage = message != null && !message.isEmpty();
 
-		assertTrue(isMessage);
+		final String failedTestMessage =
+				"Expected to get an exception not allowing for a negative value recharge";
+
+		assertTrue(isMessage, failedTestMessage);
 	}
 
 	@Test
@@ -57,6 +60,9 @@ class AssistantApplicationTests {
 
 		final String message = exception.getMessage();
 		final boolean isMessage = message != null && !message.isEmpty();
+
+		final String failedTestMessage =
+				"Expected to get an exception not allowing for a recharge of nonexistent register account";
 
 		assertTrue(isMessage);
 	}
