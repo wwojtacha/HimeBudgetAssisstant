@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 
 public class TransferAmount {
 
-    private final BigDecimal transferValue;
+    private BigDecimal transferValue;
 
     public TransferAmount(BigDecimal transferValue) {
         this.transferValue = transferValue;
+    }
+
+    public TransferAmount() {
     }
 
     public BigDecimal getTransferValue() {
