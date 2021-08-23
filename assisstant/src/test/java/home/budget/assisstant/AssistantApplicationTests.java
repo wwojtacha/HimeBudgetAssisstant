@@ -96,7 +96,7 @@ class AssistantApplicationTests {
 		final boolean isMessage = message != null && !message.isEmpty();
 
 		final String failedTestMessage =
-				"Expected to get an exception not allowing for transfer from non-existing register account";
+				"Expected to get an exception not allowing for transfer from nonexistent register account";
 
 		assertTrue(isMessage, failedTestMessage);
 	}
@@ -113,7 +113,7 @@ class AssistantApplicationTests {
 		final boolean isMessage = message != null && !message.isEmpty();
 
 		final String failedTestMessage =
-				"Expected to get an exception not allowing for transfer to non-existing register account";
+				"Expected to get an exception not allowing for transfer to nonexistent register account";
 
 		assertTrue(isMessage, failedTestMessage);
 	}
