@@ -26,4 +26,22 @@ In order to build the application with tests triggered, go to directory with pom
 
     'mvn clean install'
 
-#### Bear in mind that tests require a separate database named 'home_budget_test', and the same user with the same privileges as in case of production database. 
+#### Bear in mind that tests require a separate database named 'home_budget_test', and the same user with the same privileges as in case of production database.
+
+#### REMARKS ###
+=> It would be good to link a register account with a user,
+
+=> I am not sure how to understand the following requirement:
+
+    3. Data persistence: the application should persist balance of each register
+    each time it is updated and even in case the whole system is turned off,
+    all registers should have their balances set to previous values upon its restart
+
+Does it mean that during each restart 'register_account' table should be recreated with initial values ?
+That is how it is done in case of database used for tests.
+
+#### Current understanding/implementation:
+If, for instance during money transfer, there is a power shutdown, the source and destination balances will be reset to their values from before the transfer.
+However, with each restart 'register_account' table is not recreated and repopulated with initial values.
+
+
