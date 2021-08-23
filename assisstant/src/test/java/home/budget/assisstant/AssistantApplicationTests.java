@@ -64,7 +64,7 @@ class AssistantApplicationTests {
 		final String failedTestMessage =
 				"Expected to get an exception not allowing for a recharge of nonexistent register account";
 
-		assertTrue(isMessage);
+		assertTrue(isMessage, failedTestMessage);
 	}
 
 	@Test
