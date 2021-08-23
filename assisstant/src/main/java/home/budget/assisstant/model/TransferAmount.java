@@ -4,9 +4,15 @@ import java.math.BigDecimal;
 
 public class TransferAmount {
 
-    final private BigDecimal transferValue = BigDecimal.ZERO;
+    private final BigDecimal transferValue;
+
+    public TransferAmount(BigDecimal transferValue) {
+        this.transferValue = transferValue;
+    }
 
     public BigDecimal getTransferValue() {
         return transferValue;
     }
+
+
 }
