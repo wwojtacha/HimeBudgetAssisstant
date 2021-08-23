@@ -147,10 +147,6 @@ class AssistantApplicationTests {
 		final String message = "Wallet and/or food balances should have other values";
 
 		assertTrue(isWalletBalanceDecreased && isFoodBalanceIncreased, message);
-
-//		restore balances to initial values so as not to change DB entries, because the same test next time would fail
-		registerAccountService.transferMoney(4L, 1L, transferAmount);
-
 	}
 
 	@Test
