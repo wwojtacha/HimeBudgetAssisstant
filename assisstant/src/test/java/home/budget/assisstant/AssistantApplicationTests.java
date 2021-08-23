@@ -67,6 +67,35 @@ class AssistantApplicationTests {
 	}
 
 	@Test
+	void checkIfValidRechargeCanBeMade() {
+		final TransferAmount transferAmount = new TransferAmount(BigDecimal.valueOf(500));
+
+		final List<RegisterAccount> registerAccountsBeforeRecharge = registerAccountService.getRegisterAccounts();
+
+		final BigDecimal balanceBeforeRecharge = registerAccountsBeforeRecharge.stream()
+				.filter(a -> "Wallet".equals(a.getName()))
+				.map(RegisterAccount::getBalance)
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("'Wallet' account does not exist"));
+
+		registerAccountService.rechargeRegisterAccount(1L, transferAmount);
+
+		final List<RegisterAccount> registerAccountsAfterRecharge = registerAccountService.getRegisterAccounts();
+
+		final BigDecimal balanceAfterRecharge = registerAccountsAfterRecharge.stream()
+				.filter(a -> "Wallet".equals(a.getName()))
+				.map(RegisterAccount::getBalance)
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("'Wallet' account does not exist"));
+
+		final boolean hasBalanceIncreased = balanceAfterRecharge.compareTo(balanceBeforeRecharge) > 0;
+
+		final String message = "Expected to get recharged (increased) value for 'Wallet' balance";
+
+		assertTrue(hasBalanceIncreased, message);
+	}
+
+	@Test
 	void checkIfNegativeValueTransferCanBeMade() {
 		final TransferAmount transferAmount = new TransferAmount(BigDecimal.valueOf(-100));
 
