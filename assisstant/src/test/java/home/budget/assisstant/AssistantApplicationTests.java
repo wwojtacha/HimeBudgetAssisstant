@@ -14,8 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -152,6 +151,15 @@ class AssistantApplicationTests {
 //		restore balances to initial values so as not to change DB entries, because the same test next time would fail
 		registerAccountService.transferMoney(4L, 1L, transferAmount);
 
+	}
+
+	@Test
+	void checkRegisterAccountList() {
+		final List<RegisterAccount> registerAccounts = registerAccountService.getRegisterAccounts();
+
+		final String message = "Expected to get at least one register account";
+
+		assertFalse(registerAccounts.isEmpty(), message);
 	}
 
 }
